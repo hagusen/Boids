@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public class Boid
 {
 
@@ -9,21 +10,26 @@ public class Boid
     public Vector2 velocity;
     public Vector2 acceleration;
 
-    public float visionDist;
 
     public int flockmates = 0;
     public Vector2 avgFlockVelocity;
     public Vector2 avgFlockCentre;
+    public Vector2 avgFlockSeparation;
 
     // settings
     Settings data;
-
-    Boid(Vector2 velocity, float visionDist) {
+    public Boid(Vector2 velocity, Vector2 position, Settings data) {
 
         this.velocity = velocity;
-        this.visionDist = visionDist;
-        this.position = Vector2.zero;
+        this.position = position;
         this.acceleration = Vector2.zero;
+        this.data = data;
+
+        avgFlockVelocity = Vector2.zero;
+        avgFlockCentre = Vector2.zero;
+        avgFlockSeparation = Vector2.zero;
+
+
     }
 
     Vector2 SteerTowards(Vector2 vector) {
@@ -40,62 +46,66 @@ public class Boid
     }
 
     //simple o(n) vision approach * boids
-    void CheckVision(Boid[] boids) {
+    public void CheckVision(Boid[] boids) {
 
         Vector2 flockVelocity = Vector2.zero;
         Vector2 flockCentre = Vector2.zero;
-        Vector2 avoid = Vector2.zero;
+        Vector2 flockSeparation = Vector2.zero;
         flockmates = 0;
 
         foreach (var boid in boids) {
             if (boid != this) {
+                Vector2 delta = boid.position - this.position;
+                float sqrDist = Vector2.SqrMagnitude(delta); //sqr is cheaper
 
-                float sqrDist = Vector2.SqrMagnitude(boid.position - this.position); //sqr is cheaper
-
-                if (sqrDist < visionDist * visionDist) {
+                if (sqrDist < data.visionDist * data.visionDist) {
 
                     flockmates++;
-
-
                     flockVelocity += boid.velocity.normalized;//sdf dfe
                     flockCentre += boid.position;
 
                     // Add avoidance
-                    if (true) {
-
+                    if (sqrDist < data.avoidanceDist * data.avoidanceDist) {
+                        flockSeparation -= delta / sqrDist;
                     }
 
                 }
             }
         }
-        if (boids.Length != 0) {
+        if (flockmates != 0) {
             // change values
             avgFlockVelocity = flockVelocity / flockmates;
             avgFlockCentre = flockCentre / flockmates;
+            avgFlockSeparation = flockSeparation / flockmates;
         }
     }
 
-    void UpdateBoid(float timestep) {
+    public void UpdateBoid(float timestep) {
         acceleration = Vector2.zero;
 
+        CheckOutofBounds(data.arenaRadius);
 
-        acceleration += SteerTowards(avgFlockVelocity);
-
-
-
-
+        acceleration += SteerTowards(avgFlockVelocity);             //Alignment
+        acceleration += SteerTowards(avgFlockCentre - position);    //Cohesion
+        acceleration += SteerTowards(avgFlockSeparation) * 2;           //Avoidance
 
 
 
         velocity += acceleration * timestep;
 
+        float magnitude = velocity.magnitude;
+        Vector3 dir = velocity.normalized;
+        magnitude = Mathf.Clamp(magnitude, data.minSpeed, data.maxSpeed);
+
+        velocity = dir * magnitude;
+        position += velocity * timestep;
+
+
+
 
         //acceleration += Align().normalized;
-
         //transform.Translate(velocity * timestep);
-
         // transform.right = velocity.normalized;
-
     }
 
 
