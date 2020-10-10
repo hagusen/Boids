@@ -1,11 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+static class c
+{
+    public const float arenaRadius = 85;
 
+}
 public class Controller : MonoBehaviour
 {
 
-    public float arenaRadius;
 
     public static Controller ins;
 
@@ -28,7 +31,7 @@ public class Controller : MonoBehaviour
 
         UnityEditor.Handles.color = Color.black * 1f;
 
-        UnityEditor.Handles.DrawWireArc(transform.position, Vector3.back, Vector3.up, 360, arenaRadius);
+       // UnityEditor.Handles.DrawWireArc(transform.position, Vector3.back, Vector3.up, 360, arenaRadius);
 
     }
 

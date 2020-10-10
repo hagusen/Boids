@@ -37,12 +37,7 @@ public class Boid2 : MonoBehaviour
         //Update Vision
         seenObjects = Physics2D.OverlapCircleAll(transform.position, visionDist);
 
-        //If outside of the arena
-        if (transform.position.magnitude > Controller.ins.arenaRadius) {
-            //Go to the middle again
-            acceleration += SteerTowards(-transform.position);
 
-        }
 
 
 
