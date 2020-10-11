@@ -2,6 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
+// obstacle avoidance??
+// add my static fake cirle collisions?
+
+// Raycast on every boid
+
+
+
 public class BoidManager : MonoBehaviour
 {
     public GameObject prefab;
@@ -39,7 +47,7 @@ public class BoidManager : MonoBehaviour
             boid.CheckVision(boids);
             boid.UpdateBoid(Time.deltaTime);
 
-
+            // add collision check
 
 
         }
