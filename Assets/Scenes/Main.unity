@@ -823,7 +823,7 @@ MonoBehaviour:
     visionDist: 2.87
     avoidanceDist: 2.33
     arenaRadius: 62.17
-  numBoids: 403
+  numBoids: 406
   boids:
   - position: {x: 0, y: 0}
     velocity: {x: 0, y: 0}
