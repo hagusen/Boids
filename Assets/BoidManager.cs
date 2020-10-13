@@ -47,7 +47,7 @@ public class BoidManager : MonoBehaviour
             boid.CheckVision(boids);
             boid.UpdateBoid(Time.deltaTime);
 
-            // add collision check
+        
 
 
         }
